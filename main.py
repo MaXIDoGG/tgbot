@@ -15,21 +15,29 @@ API_TOKEN = "7486297704:AAHvSrZvD1Bco9gFrgyx6m6v0n5eEokhGzo"
 dp = Dispatcher()
 
 # Главное меню
-main_menu = ReplyKeyboardMarkup(resize_keyboard=True)
-main_menu.add(
-    KeyboardButton("Виды услуг"),
-    KeyboardButton("Контакты"),
-    KeyboardButton("Исполнители"),
+main_menu = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="Виды услуг"),
+            KeyboardButton(text="Контакты"),
+            KeyboardButton(text="Исполнители"),
+        ]
+    ],
+    resize_keyboard=True,
 )
 
 # Категории услуг
-services_menu = InlineKeyboardMarkup(row_width=2)
-services_menu.add(
-    InlineKeyboardButton("Услуга 1", callback_data="service_1"),
-    InlineKeyboardButton("Услуга 2", callback_data="service_2"),
-    InlineKeyboardButton("Услуга 3", callback_data="service_3"),
-    InlineKeyboardButton("Услуга 4", callback_data="service_4"),
-    InlineKeyboardButton("Услуга 5", callback_data="service_5"),
+services_menu = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Услуга 1", callback_data="service_1"),
+            InlineKeyboardButton(text="Услуга 2", callback_data="service_2"),
+            InlineKeyboardButton(text="Услуга 3", callback_data="service_3"),
+            InlineKeyboardButton(text="Услуга 4", callback_data="service_4"),
+            InlineKeyboardButton(text="Услуга 5", callback_data="service_5"),
+        ]
+    ],
+    row_width=2,
 )
 
 # Исполнители для услуги
