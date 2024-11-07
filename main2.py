@@ -35,14 +35,14 @@ main_menu = ReplyKeyboardMarkup(
 )
 
 # Категории услуг
-services_menu = InlineKeyboardMarkup(
+categories_menu = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="Услуга 1", callback_data="service_1"),
-            InlineKeyboardButton(text="Услуга 2", callback_data="service_2"),
-            InlineKeyboardButton(text="Услуга 3", callback_data="service_3"),
-            InlineKeyboardButton(text="Услуга 4", callback_data="service_4"),
-            InlineKeyboardButton(text="Услуга 5", callback_data="service_5"),
+            InlineKeyboardButton(text="Услуга 1", callback_data="category_1"),
+            InlineKeyboardButton(text="Услуга 2", callback_data="category_2"),
+            InlineKeyboardButton(text="Услуга 3", callback_data="category_3"),
+            InlineKeyboardButton(text="Услуга 4", callback_data="category_4"),
+            InlineKeyboardButton(text="Услуга 5", callback_data="category_5"),
         ]
     ],
     row_width=2,
@@ -50,11 +50,31 @@ services_menu = InlineKeyboardMarkup(
 
 # Исполнители для услуги
 performers = [
-    {"name": "Исполнитель 1", "image": "performer_1.jpg"},
-    {"name": "Исполнитель 2", "image": "performer_1.jpg"},
-    {"name": "Исполнитель 3", "image": "performer_1.jpg"},
-    {"name": "Исполнитель 4", "image": "performer_1.jpg"},
-    {"name": "Исполнитель 5", "image": "performer_1.jpg"},
+    {
+        "name": "Исполнитель 1",
+        "image": "performer_1.jpg",
+        "categories": ["category_1", "category_2"],
+    },
+    {
+        "name": "Исполнитель 2",
+        "image": "performer_1.jpg",
+        "categories": ["category_2", "category_3"],
+    },
+    {
+        "name": "Исполнитель 3",
+        "image": "performer_1.jpg",
+        "categories": ["category_3", "category_4"],
+    },
+    {
+        "name": "Исполнитель 4",
+        "image": "performer_1.jpg",
+        "categories": ["category_4", "category_5"],
+    },
+    {
+        "name": "Исполнитель 5",
+        "image": "performer_1.jpg",
+        "categories": ["category_5", "category_1"],
+    },
 ]
 
 
@@ -69,8 +89,8 @@ async def send_welcome(message: Message):
 
 # Виды услуг
 @dp.message(lambda message: message.text == "Виды услуг")
-async def show_services(message: Message):
-    await message.answer("Выберите категорию услуг:", reply_markup=services_menu)
+async def show_categories(message: Message):
+    await message.answer("Выберите категорию услуг:", reply_markup=categories_menu)
 
 
 # Контакты
@@ -89,16 +109,24 @@ async def show_all_performers(message: Message):
 
 
 # Обработка кликов по услугам
-@dp.callback_query(lambda c: c.data.startswith("service_"))
-async def show_performers_for_service(callback_query: types.CallbackQuery):
-    service_id = callback_query.data.split("_")[1]
-    # await callback_query.answer_callback_query(callback_query.id)
-    await callback_query.message.answer(text=f"Исполнители для услуги {service_id}:")
+@dp.callback_query(lambda c: c.data.startswith("category_"))
+async def show_performers_for_category(callback_query: types.CallbackQuery):
+    category_id = callback_query.data.split("_")[1]
+    await callback_query.message.answer(text=f"Исполнители для услуги {category_id}:")
+    media: list[types.InputMedia] = []
+
     for performer in performers:
-        photo = FSInputFile("img/" + performer["image"])
-        await callback_query.message.answer_photo(
-            photo=photo, caption=performer["name"]
-        )
+        if "category_" + category_id in performer["categories"]:
+            media.append(
+                types.InputMediaPhoto(
+                    media=FSInputFile("img/" + performer["image"]),
+                    caption=performer["name"],
+                )
+            )
+
+    await callback_query.message.answer_media_group(
+        media=media,
+    )
 
 
 async def main() -> None:
